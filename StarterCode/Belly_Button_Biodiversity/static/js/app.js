@@ -3,8 +3,8 @@ function buildMetadata(sample) {
   // @TODO: Complete the following function that builds the metadata panel
 
   // Use `d3.json` to fetch the metadata for a sample
-  const metadataURL = "/metadata" +sample;
-  d3.json(metadataURL).then(function(data) {
+  const metadataURL = "/metadata/" +sample;
+  d3.json(metadataURL).then((data) => {
  // Use d3 to select the panel with id of `#sample-metadata`
     metadatapanel = d3.select("#sample-metadata");
 
@@ -15,12 +15,11 @@ function buildMetadata(sample) {
     // Hint: Inside the loop, you will need to use d3 to append new
     // tags for each key-value in the metadata.
 
-    object.entries(data).forEach(([key, value]) => {
-      var cell = metadatapanel.append("p");
-      cell.text(key + ":"+value);
+    Object.entries(data).forEach(([key, value]) => {
+          metadatapanel.append("p").text(`${key}: ${value}`);
 
     });
-
+    buildGauge(data.WFREQ);
   });
 
 }
@@ -29,7 +28,7 @@ function buildCharts(sample) {
 
   // @TODO: Use `d3.json` to fetch the sample data for the plots
   const sampleDataURL = "/samples/" +sample;
-  d3.json(sampleDataURL).then(function(data){
+  d3.json(sampleDataURL).then((data)=> {
   // @TODO: Build a Bubble Chart using the sample data
 
     // @TODO: Build a Pie Chart
@@ -39,19 +38,20 @@ function buildCharts(sample) {
 
     results = [];
     for (var i = 0; i < data.otu_ids.length; i++){
-      result.push({"otu_ids":data.otu_ids[i], "otu_labels": data.otu_labels[i], "sample_values":data.sample_values[i] });
+      results.push({"otu_ids":data.otu_ids[i], "otu_labels": data.otu_labels[i], "sample_values":data.sample_values[i] });
 
     };
-    result.sort((a,b) => b.sample_values -a.sample_values);
-    result =result.slice(0,10);
-    console.log(result);
+    results.sort((a,b) => b.sample_values - a.sample_values);
+    results =results.slice(0,10);
+    console.log(results);
     // Trace for the sample data
     var trace1 ={
-      values:result.map(row => row.sample_values),
+      values:results.map(row => row.sample_values),
       labels:results.map(row => row.otu_ids),
       hovertext: results.map(row => row.otu_labels),
-      type:"pie",
-      orientation: "h"
+      hoverinfo: "hovertext",
+      type:"pie"
+      //orientation: "h"
 
     };
     var pieChart = [trace1];
@@ -76,11 +76,11 @@ function buildCharts(sample) {
 
         // BONUS: Build the Gauge Chart
     // buildGauge(data.WFREQ);
-const washDataURL = "/wfreq/" + sample;
-d3.json(washDataURL).then(function(data){
-buildGauge(data.WFREQ);
+// const washDataURL = "/wfreq/" + sample;
+// d3.json(washDataURL).then(function(data){
+// buildGauge(data.WFREQ);
 
-});
+// });
 
   });
   
